@@ -1,0 +1,30 @@
+services:
+  postgres_db:
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+     - pgdata:/var/lib/postgresql/data 
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todoapp
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  backend:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+    restart: always
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres_db:5432/todoapp?sslmode=disable
+      PORT: 8080
+volumes:
+  pgdata:
