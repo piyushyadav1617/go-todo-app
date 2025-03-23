@@ -6,7 +6,7 @@ COPY go.mod go.sum ./
 RUN  go mod download
 COPY . .
 
-RUN go build -v -o ./go-todo-app .
+RUN go build -v -o ./go-todo-app ./cmd/main.go
 
 EXPOSE 8080
 CMD ["./go-todo-app"]
